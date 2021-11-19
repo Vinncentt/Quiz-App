@@ -1,5 +1,7 @@
 const question = document.getElementById("question");
 const choices = Array.from(document.getElementsByClassName("choice-text"));
+const progressText = document.getElementById('progressText');
+const scoreText = document.getElementById('score');
 
 let currentQuestion = {}; //object
 let acceptingAnswers = true;
@@ -9,7 +11,7 @@ let avilableQuestions = [];
 
 let questions = [
     {
-    "question": "Inside which HTML element do we put the JavaScript??",
+    "question": "Inside which HTML questionCounterement do we put the JavaScript??",
     "choice1": "<script>",
     "choice2": "<javascript>",
     "choice3": "<js>",
@@ -37,14 +39,14 @@ let questions = [
 
 //Constatnts
 
-const CORRECT_BONUS = 10;
+const CORRECT_BONUS = 50;
 const MAX_QUESTIONS = 3;
 
 StartGame = () => {
     questionCounter = 0;
     score = 0;
     availableQuestions = [...questions]
-    console.log(availableQuestions);
+    //console.log(availableQuestions);
     getNewQuestion();
 };
 
@@ -52,8 +54,12 @@ getNewQuestion = () => {
     if(availableQuestions.length === 0 || questionCounter >= MAX_QUESTIONS){
         //Go to the end page
         return window.location.assign("/end.html");
+        // return window.location.reload(false);
     }
     questionCounter++;
+    //questionCounterText.innerText = questionCounterText + "/" + MAX_QUESTIONS;
+    progressText.innerText =`Question ${questionCounter}/${MAX_QUESTIONS}`;
+    
     const questionIndex = Math.floor(Math.random() * availableQuestions.length);
     currentQuestion = availableQuestions[questionIndex];
     question.innerText = currentQuestion.question;
@@ -77,7 +83,31 @@ choices.forEach(choice => {
         const selectedChoice = e.target;
         const selectedAnswer = selectedChoice.dataset["number"];
 
-        getNewQuestion();
+        const classToAplly = selectedAnswer == currentQuestion.answer ? 'correct' : 'incorrect';
+        
+        //same role writing in anothe way
+        // const classToAplly = 'incorrect';
+        // if(selectedAnswer == currentQuestion.answer){
+        //     classToAplly = 'correct';
+        // }
+
+        if(classToAplly === 'correct') {
+            incrementScore(CORRECT_BONUS);
+        }
+
+        selectedChoice.parentElement.classList.add(classToAplly);
+        
+        setTimeout( () => {
+            selectedChoice.parentElement.classList.remove(classToAplly);
+            getNewQuestion();
+        }, 1000);
     });
 })
+
+incrementScore = num => {
+    score += num;
+    scoreText.innerText = score;
+}
+
+
 StartGame();
