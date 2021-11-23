@@ -140,3 +140,7 @@ input{
 input ::placeholder{
     color: #aaa;
 }
+
+#highScores{
+    width: unset;
+}
